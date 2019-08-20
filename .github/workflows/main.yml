@@ -1,0 +1,75 @@
+name: dev-env-init
+on: [push]
+
+env:
+  TESTING_REPO_URL: https://github.com/DataSentics/dbx-deploy.git
+  TESTING_REPO_DIR: dbx-deploy
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Init
+        run: |
+          wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+          chmod +x Miniconda3-latest-Linux-x86_64.sh
+          bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
+          source ~/miniconda/etc/profile.d/conda.sh
+          git clone $TESTING_REPO_URL
+          cd $TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh
+
+  Windows:
+    runs-on: windows-latest
+    steps:
+      - name: Init
+        run: |
+          powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
+          start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /AddToPath=1 /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
+          powershell -Command "Invoke-WebRequest https://github.com/git-for-windows/git/releases/download/v2.23.0.windows.1/Git-2.23.0-64-bit.exe -OutFile GitLatest.exe"
+          start /wait "" GitLatest.exe /SILENT /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
+          git clone %TESTING_REPO_URL%
+          cd %TESTING_REPO_DIR%
+          PATH=%UserProfile%\Miniconda3;%PATH%
+          PATH=%UserProfile%\Miniconda3\Library\bin;%PATH%
+          PATH=%UserProfile%\Miniconda3\Scripts;%PATH%
+          PATH=%UserProfile%\.poetry\bin;%PATH%
+          set ENV_INIT_BRANCH=%GITHUB_REF:~11%
+          sh env-init.sh
+          CALL conda.bat activate "%cd%\.venv"
+          sh run_tests.sh
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          sh env-init.sh
+          sh run_tests.sh
+        shell: cmd
+
+  MacOS:
+    runs-on: macos-latest
+    steps:
+      - name: Init
+        run: |
+          brew install libgit2
+          curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh --silent -o Miniconda3-latest-MacOSX-x86_64.sh
+          chmod +x Miniconda3-latest-MacOSX-x86_64.sh
+          bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
+          source ~/miniconda/etc/profile.d/conda.sh
+          git clone $TESTING_REPO_URL
+          cd $TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh

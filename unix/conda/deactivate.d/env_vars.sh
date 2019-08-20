@@ -1,0 +1,4 @@
+#!/bin/bash
+
+unset PYTHONDONTWRITEBYTECODE
+unset PYTHONPATH
