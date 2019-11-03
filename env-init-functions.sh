@@ -1,6 +1,11 @@
 #!/bin/bash -e
 
 prepare_environment() {
+  if [ "$(cut -c 1-7 <<< "$(uname -s)")" == "MSYS_NT" ]; then
+    echo "Wrong sh.exe in use, fix your PATH! Exiting..."
+    exit 1
+  fi
+
   if [ "$(cut -c 1-10 <<< "$(uname -s)")" == "MINGW64_NT" ]; then
     echo "Detected Windows OS"
     IS_WINDOWS=1
