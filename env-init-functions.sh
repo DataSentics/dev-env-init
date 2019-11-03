@@ -72,23 +72,17 @@ download_winutils_on_windows() {
 set_conda_scripts() {
   echo "Setting up Conda activation & deactivation scripts"
 
-  if [ $IS_WINDOWS == 1 ]; then
-    local CONDA_SCRIPTS_OS="windows"
-    local CONDA_SCRIPTS_FILE="env_vars.bat"
-  else
-    local CONDA_SCRIPTS_OS="unix"
-    local CONDA_SCRIPTS_FILE="env_vars.sh"
-  fi
-
   local CONDA_ACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/activate.d"
   mkdir -p $CONDA_ACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/$CONDA_SCRIPTS_OS/conda/activate.d/$CONDA_SCRIPTS_FILE?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/$CONDA_SCRIPTS_FILE"
-  chmod +x "$CONDA_ACTIVATE_DIR/$CONDA_SCRIPTS_FILE"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/activate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.bat"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.sh"
+  chmod +x "$CONDA_ACTIVATE_DIR/env_vars.sh"
 
   local CONDA_DEACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/deactivate.d"
   mkdir -p $CONDA_DEACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/$CONDA_SCRIPTS_OS/conda/deactivate.d/$CONDA_SCRIPTS_FILE?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/$CONDA_SCRIPTS_FILE"
-  chmod +x "$CONDA_DEACTIVATE_DIR/$CONDA_SCRIPTS_FILE"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/deactivate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/env_vars.bat"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/env_vars.sh"
+  chmod +x "$CONDA_DEACTIVATE_DIR/env_vars.sh"
 }
 
 create_databricks_connect_config() {
