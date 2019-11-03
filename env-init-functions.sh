@@ -2,8 +2,10 @@
 
 prepare_environment() {
   if [ "$(cut -c 1-10 <<< "$(uname -s)")" == "MINGW64_NT" ]; then
+    echo "Detected Windows OS"
     IS_WINDOWS=1
   else
+    echo "Detected Unix-based OS"
     IS_WINDOWS=0
   fi
 
