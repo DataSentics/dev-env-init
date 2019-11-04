@@ -99,13 +99,7 @@ show_installation_finished_info() {
 
   echo "Setup completed. Active Conda environment now:"
   echo ""
-
-  if [ $IS_WINDOWS == 1 ]; then
-    echo "activate $CONDA_ENV_PATH"
-  else
-    echo "source activate $CONDA_ENV_PATH"
-  fi
-
+  echo "conda activate $CONDA_ENV_PATH"
   echo ""
 }
 
