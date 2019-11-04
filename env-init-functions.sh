@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 setup_conda() {
-  MINICONDA_BASE_DIR="$HOME/Miniconda3"
+  MINICONDA_BASE_DIR=$(conda info --base)
 
   if [ ! -f "$HOME/.bashrc" ]; then
     touch "$HOME/.bashrc"
@@ -9,7 +9,7 @@ setup_conda() {
 
   # conda.sh not yet added to .bashrc
   if ! grep -q "/etc/profile.d/conda.sh" "$HOME/.bashrc"; then
-    echo "Adding conda.sh to .bashrc"
+    echo "Adding $MINICONDA_BASE_DIR/etc/profile.d/conda.sh to .bashrc"
     echo "source $MINICONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
   fi
 }
