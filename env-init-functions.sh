@@ -1,5 +1,19 @@
 #!/bin/bash -e
 
+setup_conda() {
+  MINICONDA_BASE_DIR="$HOME/Miniconda3"
+
+  if [ ! -f "$HOME/.bashrc" ]; then
+    touch "$HOME/.bashrc"
+  fi
+
+  # conda.sh not yet added to .bashrc
+  if ! grep -q "/etc/profile.d/conda.sh" "$HOME/.bashrc"; then
+    echo "Adding conda.sh to .bashrc"
+    echo "source $MINICONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
+  fi
+}
+
 prepare_environment() {
   if [ "$(cut -c 1-7 <<< "$(uname -s)")" == "MSYS_NT" ]; then
     echo "Wrong sh.exe in use, fix your PATH! Exiting..."
@@ -104,6 +118,7 @@ show_installation_finished_info() {
 }
 
 prepare_environment_databricks_app() {
+  setup_conda
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
@@ -123,6 +138,7 @@ prepare_environment_databricks_app() {
 }
 
 prepare_environment_for_package() {
+  setup_conda
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
