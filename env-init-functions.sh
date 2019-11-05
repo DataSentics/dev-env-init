@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 setup_conda() {
-  MINICONDA_BASE_DIR=$(conda info --base)
+  MINICONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
 
   if [ ! -f "$HOME/.bashrc" ]; then
     touch "$HOME/.bashrc"
