@@ -30,27 +30,29 @@ jobs:
   Windows:
     runs-on: windows-latest
     steps:
-      - name: Init
+      - name: Conda & git installation
         run: |
           powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
           start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /AddToPath=1 /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
           powershell -Command "Invoke-WebRequest https://github.com/git-for-windows/git/releases/download/v2.23.0.windows.1/Git-2.23.0-64-bit.exe -OutFile GitLatest.exe"
           start /wait "" GitLatest.exe /SILENT /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
-          git clone %TESTING_REPO_URL%
-          cd %TESTING_REPO_DIR%
-          PATH=%UserProfile%\Miniconda3;%PATH%
-          PATH=%UserProfile%\Miniconda3\Library\bin;%PATH%
-          PATH=%UserProfile%\Miniconda3\Scripts;%PATH%
-          PATH=%UserProfile%\.poetry\bin;%PATH%
-          set ENV_INIT_BRANCH=%GITHUB_REF:~11%
-          sh env-init.sh
-          CALL conda.bat activate "%cd%\.venv"
-          sh run_tests.sh
+        shell: cmd
+      - name: Init
+        run: |
+          source ~/Miniconda3/etc/profile.d/conda.sh
+          PATH=$HOME/Miniconda3/Scripts:$PATH
+          git clone $TESTING_REPO_URL
+          cd $TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          source $HOME/.poetry/env
           poetry add exponea-python-sdk="0.1.*"
           pip uninstall -y exponea-python-sdk
-          sh env-init.sh
-          sh run_tests.sh
-        shell: cmd
+          ./env-init.sh
+          ./run_tests.sh
+        shell: sh {0}
 
   MacOS:
     runs-on: macos-latest
