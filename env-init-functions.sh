@@ -104,6 +104,7 @@ install_poetry() {
   $PYTHON_BASE_EXECUTABLE_PATH "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0b3
 
   if [ $IS_WINDOWS == 1 ]; then
+    # $HOME/.poetry/env does not exist on Windows
     export PATH="$HOME/.poetry/bin:$PATH"
   else
     source $HOME/.poetry/env
