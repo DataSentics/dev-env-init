@@ -17,8 +17,6 @@ jobs:
           source ~/miniconda/etc/profile.d/conda.sh
           git clone $TESTING_REPO_URL
           cd $TESTING_REPO_DIR
-          echo "which conda"
-          echo $(which conda)
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
