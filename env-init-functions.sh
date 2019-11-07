@@ -35,9 +35,13 @@ add_conda_to_path() {
 }
 
 setup_conda() {
-  add_conda_to_path
-
   MINICONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
+
+  if [ $IS_WINDOWS == 1 ]; then
+    PYTHON_BASE_EXECUTABLE_PATH="$MINICONDA_BASE_DIR/python.exe"
+  else
+    PYTHON_BASE_EXECUTABLE_PATH="$MINICONDA_BASE_DIR/bin/python"
+  fi
 
   if [ ! -f "$HOME/.bashrc" ]; then
     touch "$HOME/.bashrc"
@@ -72,6 +76,9 @@ prepare_environment() {
   fi
 
   CONDA_ENV_PATH="$CURRENT_DIR/.venv"
+
+  add_conda_to_path
+  setup_conda
 }
 
 create_conda_environment() {
@@ -87,7 +94,7 @@ install_new_conda_dependencies() {
 install_poetry() {
   echo "Installing Poetry globally"
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py --silent -o "$CONDA_ENV_PATH/get-poetry.py"
-  python "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0b3
+  $PYTHON_BASE_EXECUTABLE_PATH "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0b3
 
   if [ $IS_WINDOWS == 1 ]; then
     export PATH="$HOME/.poetry/bin:$PATH"
@@ -154,7 +161,6 @@ show_installation_finished_info() {
 }
 
 prepare_environment_databricks_app() {
-  setup_conda
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
@@ -174,7 +180,6 @@ prepare_environment_databricks_app() {
 }
 
 prepare_environment_for_package() {
-  setup_conda
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
