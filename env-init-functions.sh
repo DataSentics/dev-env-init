@@ -164,7 +164,7 @@ show_installation_finished_info() {
 
   echo "Setup completed. Active Conda environment now:"
   echo ""
-  echo "$CONDA_EXECUTABLE_PATH activate $CONDA_ENV_PATH"
+  echo "conda activate $CONDA_ENV_PATH"
   echo ""
 }
 
