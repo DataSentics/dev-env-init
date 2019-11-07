@@ -56,6 +56,32 @@ jobs:
           ./run_tests.sh
         shell: sh {0}
 
+  Windows_CondaNotOnPath:
+    runs-on: windows-latest
+    steps:
+      - name: Conda & git installation
+        run: |
+          powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
+          start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /AddToPath=0 /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
+          powershell -Command "Invoke-WebRequest https://github.com/git-for-windows/git/releases/download/v2.23.0.windows.1/Git-2.23.0-64-bit.exe -OutFile GitLatest.exe"
+          start /wait "" GitLatest.exe /SILENT /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
+        shell: cmd
+      - name: Init
+        run: |
+          source ~/Miniconda3/etc/profile.d/conda.sh
+          git clone $TESTING_REPO_URL
+          cd $TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh
+        shell: sh {0}
+
   MacOS:
     runs-on: macos-latest
     steps:

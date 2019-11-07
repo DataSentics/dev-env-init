@@ -9,27 +9,27 @@ add_conda_to_path() {
 
   if [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/Miniconda3/Library/bin/conda.bat"
-    PATH="$HOME/Miniconda3/Library/bin:$PATH"
+    source $HOME/Miniconda3/etc/profile.d/conda.sh
 
   elif [ -f "$HOME/Anaconda3/Library/bin/conda.bat" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/Anaconda3/Library/bin/conda.bat"
-    PATH="$HOME/Anaconda3/Library/bin:$PATH"
+    source $HOME/Anaconda3/etc/profile.d/conda.sh
 
   elif [ -f "$HOME/miniconda3/bin/conda" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/miniconda3/bin/conda"
-    PATH="$HOME/miniconda3/bin:$PATH"
+    source $HOME/miniconda3/etc/profile.d/conda.sh
 
   elif [ -f "$HOME/anaconda3/bin/conda" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/anaconda3/bin/conda"
-    PATH="$HOME/anaconda3/bin:$PATH"
+    source $HOME/anaconda3/etc/profile.d/conda.sh
 
   elif [ -f "$HOME/miniconda/bin/conda" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/miniconda/bin/conda"
-    PATH="$HOME/miniconda/bin:$PATH"
+    source $HOME/miniconda/etc/profile.d/conda.sh
 
   elif [ -f "$HOME/anaconda/bin/conda" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/anaconda/bin/conda"
-    PATH="$HOME/anaconda/bin:$PATH"
+    source $HOME/anaconda/etc/profile.d/conda.sh
 
   else
     echo "Unable to find Conda executable, exiting..."
