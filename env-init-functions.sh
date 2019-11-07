@@ -3,8 +3,11 @@
 add_conda_to_path() {
   if hash conda>/dev/null; then
     CONDA_EXECUTABLE_PATH="conda"
+    echo "Using Conda executable from PATH"
+    return 0
+  fi
 
-  elif [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
+  if [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/Miniconda3/Library/bin/conda.bat"
     PATH="$HOME/Miniconda3/Library/bin:$PATH"
 
@@ -29,18 +32,22 @@ add_conda_to_path() {
     PATH="$HOME/anaconda/bin:$PATH"
 
   else
-    echo "Unable to find conda executable, exiting..."
+    echo "Unable to find Conda executable, exiting..."
     exit 1
   fi
+
+  echo "Using Conda executable: $CONDA_EXECUTABLE_PATH"
 }
 
 setup_conda() {
-  MINICONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
+  CONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
+  
+  echo "Using Conda base dir: $CONDA_BASE_DIR"
 
   if [ $IS_WINDOWS == 1 ]; then
-    PYTHON_BASE_EXECUTABLE_PATH="$MINICONDA_BASE_DIR/python.exe"
+    PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/python.exe"
   else
-    PYTHON_BASE_EXECUTABLE_PATH="$MINICONDA_BASE_DIR/bin/python"
+    PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/bin/python"
   fi
 
   if [ ! -f "$HOME/.bashrc" ]; then
@@ -49,8 +56,8 @@ setup_conda() {
 
   # conda.sh not yet added to .bashrc
   if ! grep -q "/etc/profile.d/conda.sh" "$HOME/.bashrc"; then
-    echo "Adding $MINICONDA_BASE_DIR/etc/profile.d/conda.sh to .bashrc"
-    echo "source $MINICONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
+    echo "Adding $CONDA_BASE_DIR/etc/profile.d/conda.sh to .bashrc"
+    echo "source $CONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
   fi
 }
 
