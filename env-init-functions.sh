@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 add_conda_to_path() {
-  if hash conda>/dev/null; then
+  if hash conda 2>/dev/null; then
     CONDA_EXECUTABLE_PATH="conda"
     echo "Using Conda executable from PATH"
     return 0
