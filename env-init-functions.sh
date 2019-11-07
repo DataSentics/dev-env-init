@@ -1,6 +1,42 @@
 #!/bin/bash -e
 
+add_conda_to_path() {
+  if hash conda>/dev/null; then
+    CONDA_EXECUTABLE_PATH="conda"
+
+  elif [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/Miniconda3/Library/bin/conda.bat"
+    PATH="$HOME/Miniconda3/Library/bin:$PATH"
+
+  elif [ -f "$HOME/Anaconda3/Library/bin/conda.bat" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/Anaconda3/Library/bin/conda.bat"
+    PATH="$HOME/Anaconda3/Library/bin:$PATH"
+
+  elif [ -f "$HOME/miniconda3/bin/conda" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/miniconda3/bin/conda"
+    PATH="$HOME/miniconda3/bin:$PATH"
+
+  elif [ -f "$HOME/anaconda3/bin/conda" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/anaconda3/bin/conda"
+    PATH="$HOME/anaconda3/bin:$PATH"
+
+  elif [ -f "$HOME/miniconda/bin/conda" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/miniconda/bin/conda"
+    PATH="$HOME/miniconda/bin:$PATH"
+
+  elif [ -f "$HOME/anaconda/bin/conda" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/anaconda/bin/conda"
+    PATH="$HOME/anaconda/bin:$PATH"
+
+  else
+    echo "Unable to find conda executable, exiting..."
+    exit 1
+  fi
+}
+
 setup_conda() {
+  add_conda_to_path
+
   MINICONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
 
   if [ ! -f "$HOME/.bashrc" ]; then
@@ -113,7 +149,7 @@ show_installation_finished_info() {
 
   echo "Setup completed. Active Conda environment now:"
   echo ""
-  echo "conda activate $CONDA_ENV_PATH"
+  echo "$CONDA_EXECUTABLE_PATH activate $CONDA_ENV_PATH"
   echo ""
 }
 
