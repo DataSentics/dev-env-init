@@ -101,7 +101,7 @@ install_new_conda_dependencies() {
 install_poetry() {
   echo "Installing Poetry globally"
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py --silent -o "$CONDA_ENV_PATH/get-poetry.py"
-  $PYTHON_BASE_EXECUTABLE_PATH "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0b3
+  $PYTHON_BASE_EXECUTABLE_PATH "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0
 
   if [ $IS_WINDOWS == 1 ]; then
     # $HOME/.poetry/env does not exist on Windows
@@ -115,11 +115,6 @@ install_dependencies() {
   echo "Activating Conda environment"
   eval "$(conda shell.bash hook)"
   conda activate "$CONDA_ENV_PATH"
-
-  # certifi cannot be updated by poetry (Cannot uninstall 'certifi'. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.)
-  # thus --ignore-installed is needed
-  echo "Updating certifi"
-  python -m pip install -U --ignore-installed certifi==2019.9.11
 
   # Installing dependencies from pyproject.toml
   poetry install --no-root
