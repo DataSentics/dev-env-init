@@ -60,6 +60,16 @@ setup_conda() {
     echo "Adding $CONDA_BASE_DIR/etc/profile.d/conda.sh to .bashrc"
     echo "source $CONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
   fi
+
+  echo "Creating ~./datasentics_env.sh"
+  rm -f "$HOME/datasentics_env.sh"
+  touch "$HOME/datasentics_env.sh"
+  echo "alias ca='conda activate \$PWD/.venv'" >> ~/datasentics_env.sh
+
+  if ! grep -q "datasentics_env.sh" "$HOME/.bashrc"; then
+      echo "source ~/datasentics_env.sh added to ~/.bashrc"
+      echo "source ~/datasentics_env.sh" >> ~/.bashrc
+  fi
 }
 
 prepare_environment() {
