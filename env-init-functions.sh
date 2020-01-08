@@ -51,6 +51,7 @@ setup_conda() {
   fi
 
   if [ ! -f "$HOME/.bashrc" ]; then
+    echo "Creating .bashrc"
     touch "$HOME/.bashrc"
   fi
 
@@ -116,7 +117,7 @@ install_dependencies() {
   eval "$(conda shell.bash hook)"
   conda activate "$CONDA_ENV_PATH"
 
-  # Installing dependencies from pyproject.toml
+  echo "Installing dependencies from poetry.lock"
   poetry install --no-root
 }
 
@@ -132,12 +133,14 @@ download_winutils_on_windows() {
 set_conda_scripts() {
   echo "Setting up Conda activation & deactivation scripts"
 
+  echo "Seting-up conda/activate.d"
   local CONDA_ACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/activate.d"
   mkdir -p $CONDA_ACTIVATE_DIR
   curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/activate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.bat"
   curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_ACTIVATE_DIR/env_vars.sh"
 
+  echo "Seting-up conda/deactivate.d"
   local CONDA_DEACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/deactivate.d"
   mkdir -p $CONDA_DEACTIVATE_DIR
   curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/deactivate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/env_vars.bat"
