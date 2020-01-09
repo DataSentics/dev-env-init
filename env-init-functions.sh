@@ -104,11 +104,6 @@ create_conda_environment() {
   conda env create -f environment.yml -p "$CONDA_ENV_PATH"
 }
 
-install_new_conda_dependencies() {
-  echo "Installing new Conda dependencies to $CONDA_ENV_PATH"
-  conda env update -f environment.yml -p "$CONDA_ENV_PATH" --prune
-}
-
 install_poetry() {
   echo "Installing Poetry globally"
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py --silent -o "$CONDA_ENV_PATH/get-poetry.py"
@@ -184,6 +179,7 @@ prepare_environment_databricks_app() {
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
+    echo "Creating new environment"
     create_conda_environment
     install_poetry
     install_dependencies
@@ -191,7 +187,7 @@ prepare_environment_databricks_app() {
     set_conda_scripts
     create_databricks_connect_config
   else
-    install_new_conda_dependencies
+    echo "Installing new packages in existing environment"
     install_poetry
     install_dependencies
   fi
@@ -203,12 +199,13 @@ prepare_environment_for_package() {
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
+    echo "Creating new environment"
     create_conda_environment
     install_poetry
     install_dependencies
     set_conda_scripts
   else
-    install_new_conda_dependencies
+    echo "Installing new packages in existing environment"
     install_poetry
     install_dependencies
   fi
