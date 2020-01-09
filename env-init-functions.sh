@@ -127,6 +127,10 @@ install_dependencies() {
   eval "$(conda shell.bash hook)"
   conda activate "$CONDA_ENV_PATH"
 
+  local POETRY_PATH
+  POETRY_PATH=$(where poetry | sed -n '1!p')
+  echo "Using Poetry from: $POETRY_PATH"
+
   echo "Installing dependencies from poetry.lock"
   poetry install --no-root
 }
