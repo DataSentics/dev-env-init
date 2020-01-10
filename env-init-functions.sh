@@ -61,7 +61,7 @@ setup_conda() {
     echo "source $CONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
   fi
 
-  echo "Creating ~./datasentics_env.sh"
+  echo "Creating ~/datasentics_env.sh"
   rm -f "$HOME/datasentics_env.sh"
   touch "$HOME/datasentics_env.sh"
   echo "alias ca='conda activate \$PWD/.venv'" >> ~/datasentics_env.sh
