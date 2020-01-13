@@ -135,7 +135,7 @@ download_winutils_on_windows() {
     echo "Downloading Hadoop winutils.exe"
 
     mkdir -p "$CONDA_ENV_PATH/hadoop/bin"
-    curl https://raw.githubusercontent.com/steveloughran/winutils/master/hadoop-3.0.0/bin/winutils.exe --silent -o "$CONDA_ENV_PATH/hadoop/bin/winutils.exe"
+    curl https://raw.githubusercontent.com/steveloughran/winutils/master/hadoop-3.0.0/bin/winutils.exe --silent > "$CONDA_ENV_PATH/hadoop/bin/winutils.exe"
   fi
 }
 
@@ -145,15 +145,15 @@ set_conda_scripts() {
   echo "Seting-up conda/activate.d"
   local CONDA_ACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/activate.d"
   mkdir -p $CONDA_ACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/activate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.bat"
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent -o "$CONDA_ACTIVATE_DIR/env_vars.sh"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/activate.d/env_vars.bat?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.bat"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_ACTIVATE_DIR/env_vars.sh"
 
   echo "Seting-up conda/deactivate.d"
   local CONDA_DEACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/deactivate.d"
   mkdir -p $CONDA_DEACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/deactivate.d/env_vars.bat?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/env_vars.bat"
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent -o "$CONDA_DEACTIVATE_DIR/env_vars.sh"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/deactivate.d/env_vars.bat?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.bat"
+  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_DEACTIVATE_DIR/env_vars.sh"
 }
 
