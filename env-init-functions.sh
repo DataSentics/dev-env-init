@@ -179,19 +179,15 @@ prepare_environment_databricks_app() {
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
-    echo "Creating new environment"
+    echo "Creating new Conda environment"
     create_conda_environment
-    install_poetry
-    install_dependencies
-    download_winutils_on_windows
-    set_conda_scripts
-    create_databricks_connect_config
-  else
-    echo "Installing new packages in existing environment"
-    install_poetry
-    install_dependencies
   fi
 
+  install_poetry
+  install_dependencies
+  download_winutils_on_windows
+  set_conda_scripts
+  create_databricks_connect_config
   show_installation_finished_info
 }
 
@@ -199,16 +195,12 @@ prepare_environment_for_package() {
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
-    echo "Creating new environment"
+    echo "Creating new Conda environment"
     create_conda_environment
-    install_poetry
-    install_dependencies
-    set_conda_scripts
-  else
-    echo "Installing new packages in existing environment"
-    install_poetry
-    install_dependencies
   fi
 
+  install_poetry
+  install_dependencies
+  set_conda_scripts
   show_installation_finished_info
 }
