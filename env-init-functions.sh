@@ -15,6 +15,14 @@ add_conda_to_path() {
     CONDA_EXECUTABLE_PATH="$HOME/Anaconda3/Library/bin/conda.bat"
     source $HOME/Anaconda3/etc/profile.d/conda.sh
 
+  elif [ -f "$HOME/AppData/Local/Continuum/miniconda3/condabin/conda.bat" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/AppData/Local/Continuum/miniconda3/condabin/conda.bat"
+    source $HOME/AppData/Local/Continuum/miniconda3/etc/profile.d/conda.sh
+
+  elif [ -f "$HOME/AppData/Local/Continuum/anaconda3/condabin/conda.bat" ]; then
+    CONDA_EXECUTABLE_PATH="$HOME/AppData/Local/Continuum/anaconda3/condabin/conda.bat"
+    source $HOME/AppData/Local/Continuum/anaconda3/etc/profile.d/conda.sh
+
   elif [ -f "$HOME/miniconda3/bin/conda" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/miniconda3/bin/conda"
     source $HOME/miniconda3/etc/profile.d/conda.sh
