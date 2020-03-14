@@ -164,12 +164,12 @@ set_conda_scripts() {
 }
 
 create_databricks_connect_config() {
-    # .databricks-connect file must always exist (even empty) for the Databricks Connect to work properly
-    # specific cluster connection credentials must be set when creating the SparkSession instance
-    if [ ! -f ~/.databricks-connect ]; then
-      echo "Creating empty .databricks-connect file"
-      touch ~/.databricks-connect
-    fi
+  # .databricks-connect file must always exist (even empty) for the Databricks Connect to work properly
+  # specific cluster connection credentials must be set when creating the SparkSession instance
+  if [ ! -f ~/.databricks-connect ]; then
+    echo "Creating empty .databricks-connect file"
+    touch ~/.databricks-connect
+  fi
 }
 
 show_installation_finished_info() {
