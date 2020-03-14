@@ -153,14 +153,12 @@ set_conda_scripts() {
   echo "Seting-up conda/activate.d"
   local CONDA_ACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/activate.d"
   mkdir -p $CONDA_ACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/activate.d/env_vars.bat?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.bat"
   curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_ACTIVATE_DIR/env_vars.sh"
 
   echo "Seting-up conda/deactivate.d"
   local CONDA_DEACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/deactivate.d"
   mkdir -p $CONDA_DEACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/windows/conda/deactivate.d/env_vars.bat?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.bat"
   curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/master/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_DEACTIVATE_DIR/env_vars.sh"
 }
