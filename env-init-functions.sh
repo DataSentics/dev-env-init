@@ -172,6 +172,15 @@ create_databricks_connect_config() {
   fi
 }
 
+create_dot_env_file() {
+  DOT_ENV_PATH="$CURRENT_DIR/.env"
+
+  if [ ! -f "$DOT_ENV_PATH" ]; then
+    echo "Creating .env file in the project root"
+    echo "APP_ENV=dev" > $DOT_ENV_PATH
+  fi
+}
+
 show_installation_finished_info() {
   echo "---------------"
 
@@ -194,6 +203,7 @@ prepare_environment_databricks_app() {
   download_winutils_on_windows
   set_conda_scripts
   create_databricks_connect_config
+  create_dot_env_file
   show_installation_finished_info
 }
 
