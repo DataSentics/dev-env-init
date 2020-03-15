@@ -178,8 +178,13 @@ create_dot_env_file() {
   DOT_ENV_PATH="$CURRENT_DIR/.env"
 
   if [ ! -f "$DOT_ENV_PATH" ]; then
-    echo "Creating .env file in the project root"
-    echo "APP_ENV=dev" > $DOT_ENV_PATH
+    if [ -f "$CURRENT_DIR/.env.dist" ]; then
+      echo "Creating .env file from the .env.dist template"
+      cp "$CURRENT_DIR/.env.dist" "$CURRENT_DIR/.env"
+    else
+      echo "Creating empty .env file in the project root"
+      echo "APP_ENV=dev" > $DOT_ENV_PATH
+    fi
   fi
 }
 
