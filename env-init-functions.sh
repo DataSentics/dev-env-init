@@ -91,9 +91,16 @@ prepare_environment() {
   if [ "$(cut -c 1-10 <<< "$(uname -s)")" == "MINGW64_NT" ]; then
     echo "Detected Windows OS"
     IS_WINDOWS=1
+    DETECTED_OS="win"
   else
     echo "Detected Unix-based OS"
     IS_WINDOWS=0
+
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      DETECTED_OS="mac"
+    else
+      DETECTED_OS="linux"
+    fi
   fi
 
   CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -165,12 +172,50 @@ set_conda_scripts() {
   chmod +x "$CONDA_DEACTIVATE_DIR/env_vars.sh"
 }
 
+download_java() {
+  local JAVA_DIR="$HOME/.databricks-connect-java"
+
+  if [ -d "$JAVA_DIR" ]; then
+    echo "$JAVA_DIR already exists"
+    return
+  fi
+
+  echo "Downloading Java 1.8 to $JAVA_DIR"
+
+  mkdir -p $JAVA_DIR
+
+  local JAVA_ZIP_DIR="$JAVA_DIR/jdk8u242-b08"
+
+  if [ $IS_WINDOWS == 1 ]; then
+    curl https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u242b08.zip -L --silent > "$JAVA_DIR/java.zip"
+    unzip -qq "$JAVA_DIR/java.zip" -d "$JAVA_DIR"
+    mv "$JAVA_ZIP_DIR/"* $JAVA_DIR
+    rm -rf "$JAVA_ZIP_DIR"
+    rm -rf "$JAVA_DIR/java.zip"
+    rm -rf "$JAVA_DIR/src.zip"
+  elif [ $DETECTED_OS == "mac" ]; then
+    curl https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u242b08.tar.gz -L --silent > "$JAVA_DIR/java.tar.gz"
+    tar -xzf "$JAVA_DIR/java.tar.gz" -C "$JAVA_DIR"
+    mv "$JAVA_ZIP_DIR/Contents/Home/"* $JAVA_DIR
+    rm -rf "$JAVA_ZIP_DIR"
+    rm -rf "$JAVA_DIR/java.tar.gz"
+    chmod +x "$CONDA_ENV_PATH/lib/python3.7/site-packages/pyspark/bin/"*
+  elif [ $DETECTED_OS == "linux" ]; then
+    curl https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u242b08.tar.gz -L --silent > "$JAVA_DIR/java.tar.gz"
+    tar -xzf "$JAVA_DIR/java.tar.gz" -C "$JAVA_DIR"
+    mv "$JAVA_ZIP_DIR/"* $JAVA_DIR
+    rm -rf "$JAVA_ZIP_DIR"
+    rm -rf "$JAVA_DIR/java.tar.gz"
+    chmod +x "$CONDA_ENV_PATH/lib/python3.7/site-packages/pyspark/bin/"*
+  fi
+}
+
 create_databricks_connect_config() {
   # .databricks-connect file must always exist and contain at least empty JSON for the Databricks Connect to work properly
   # specific cluster connection credentials must be set when creating the SparkSession instance
-  if [ ! -f ~/.databricks-connect ]; then
+  if [ ! -f "$HOME/.databricks-connect" ]; then
     echo "Creating empty .databricks-connect file"
-    echo "{}" > ~/.databricks-connect
+    echo "{}" > "$HOME/.databricks-connect"
   fi
 }
 
@@ -209,6 +254,7 @@ prepare_environment_databricks_app() {
   install_dependencies
   download_winutils_on_windows
   set_conda_scripts
+  download_java
   create_databricks_connect_config
   create_dot_env_file
   show_installation_finished_info

@@ -2,11 +2,13 @@ name: dev-env-init
 on: [push]
 
 env:
-  TESTING_REPO_URL: https://github.com/DataSentics/dbx-deploy.git
-  TESTING_REPO_DIR: dbx-deploy
+  PACKAGE_TESTING_REPO_URL: https://github.com/DataSentics/dbx-deploy.git
+  PACKAGE_TESTING_REPO_DIR: dbx-deploy
+  APP_TESTING_REPO_URL: https://github.com/DataSentics/master-package-example.git
+  APP_TESTING_REPO_DIR: master-package-example
 
 jobs:
-  Linux:
+  package-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -22,7 +24,43 @@ jobs:
           bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
           source ~/miniconda/etc/profile.d/conda.sh
           echo "****** Setting up Conda environment ******"
-          cd $TESTING_REPO_DIR
+          cd $PACKAGE_TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          echo "******* 2nd env-init.sh invocation *******"
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh
+          echo "********* .bashrc modifications **********"
+          if ! grep -q "datasentics_env.sh" "$HOME/.bashrc"; then
+              echo "datasentics_env.sh was not added to .bashrc"
+              exit 1
+          fi
+          if [[ ! -f "$HOME/datasentics_env.sh" ]]; then
+              echo "datasentics_env.sh was not created"
+              exit 1
+          fi
+  app-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          repository: 'DataSentics/master-package-example'
+          path: 'master-package-example'
+      - name: Init
+        run: |
+          echo "************ Installing Conda ************"
+          wget --quiet -O Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh
+          chmod +x Miniconda3-latest-Linux-x86_64.sh
+          bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
+          source ~/miniconda/etc/profile.d/conda.sh
+          echo "****** Setting up Conda environment ******"
+          cd $APP_TESTING_REPO_DIR
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
@@ -43,7 +81,7 @@ jobs:
               exit 1
           fi
 
-  Windows:
+  package-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
@@ -62,7 +100,47 @@ jobs:
           source ~/Miniconda3/etc/profile.d/conda.sh
           PATH=$HOME/Miniconda3/Scripts:$PATH
           echo "****** Setting up Conda environment ******"
-          cd $TESTING_REPO_DIR
+          cd $PACKAGE_TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          echo "******* 2nd env-init.sh invocation *******"
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh
+          echo "********* .bashrc modifications **********"
+          if ! grep -q "datasentics_env.sh" "$HOME/.bashrc"; then
+              echo "datasentics_env.sh was not added to .bashrc"
+              exit 1
+          fi
+          if [[ ! -f "$HOME/datasentics_env.sh" ]]; then
+              echo "datasentics_env.sh was not created"
+              exit 1
+          fi
+        shell: sh {0}
+  app-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          repository: 'DataSentics/master-package-example'
+          path: 'master-package-example'
+      - name: Conda installation
+        run: |
+          powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
+          start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /AddToPath=1 /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
+        shell: cmd
+      - name: Init
+        run: |
+          echo "************ Setting up Conda ************"
+          source ~/Miniconda3/etc/profile.d/conda.sh
+          PATH=$HOME/Miniconda3/Scripts:$PATH
+          echo "****** Setting up Conda environment ******"
+          cd $APP_TESTING_REPO_DIR
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
@@ -84,7 +162,7 @@ jobs:
           fi
         shell: sh {0}
 
-  Windows_CondaNotOnPath:
+  package-windows-condaNotOnPath:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
@@ -102,7 +180,7 @@ jobs:
           echo "************ Setting up Conda ************"
           source ~/Miniconda3/etc/profile.d/conda.sh
           echo "****** Setting up Conda environment ******"
-          cd $TESTING_REPO_DIR
+          cd $PACKAGE_TESTING_REPO_DIR
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
@@ -124,7 +202,7 @@ jobs:
           fi
         shell: sh {0}
 
-  MacOS:
+  package-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
@@ -141,7 +219,44 @@ jobs:
           bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
           source ~/miniconda/etc/profile.d/conda.sh
           echo "****** Setting up Conda environment ******"
-          cd $TESTING_REPO_DIR
+          cd $PACKAGE_TESTING_REPO_DIR
+          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          conda activate "$PWD/.venv"
+          ./run_tests.sh
+          ./pylint.sh
+          echo "******* 2nd env-init.sh invocation *******"
+          source $HOME/.poetry/env
+          poetry add exponea-python-sdk="0.1.*"
+          pip uninstall -y exponea-python-sdk
+          ./env-init.sh
+          ./run_tests.sh
+          echo "********* .bashrc modifications **********"
+          if ! grep -q "datasentics_env.sh" "$HOME/.bashrc"; then
+              echo "datasentics_env.sh was not added to .bashrc"
+              exit 1
+          fi
+          if [[ ! -f "$HOME/datasentics_env.sh" ]]; then
+              echo "datasentics_env.sh was not created"
+              exit 1
+          fi
+  app-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          repository: 'DataSentics/master-package-example'
+          path: 'master-package-example'
+      - name: Init
+        run: |
+          echo "************ Installing Conda ************"
+          brew install libgit2
+          curl https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-MacOSX-x86_64.sh --silent -o Miniconda3-latest-MacOSX-x86_64.sh
+          chmod +x Miniconda3-latest-MacOSX-x86_64.sh
+          bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
+          source ~/miniconda/etc/profile.d/conda.sh
+          echo "****** Setting up Conda environment ******"
+          cd $APP_TESTING_REPO_DIR
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh

@@ -6,7 +6,7 @@ if [ -f "$input" ]; then
   while IFS= read -r line
   do
     if [[ "$line" =~ ^[^=]+=.+$ ]]; then
-      VAR_TO_UNSET="$(echo "$line" | sed -r 's/^([^=]+)=.+$/\1/g')"
+      VAR_TO_UNSET="$(echo "$line" | sed -E 's/^([^=]+)=.+$/\1/g')"
 
       if [ "$VAR_TO_UNSET" ]; then
         echo "Unseting $VAR_TO_UNSET"
