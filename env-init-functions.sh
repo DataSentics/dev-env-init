@@ -110,6 +110,10 @@ prepare_environment() {
     CURRENT_DIR=$(sed -r "s|^/([a-z])/|\1:/|" <<< $CURRENT_DIR)
   fi
 
+  if [ $DETECTED_OS == "mac" ]; then
+    brew install libgit2
+  fi
+
   CONDA_ENV_PATH="$CURRENT_DIR/.venv"
 
   add_conda_to_path

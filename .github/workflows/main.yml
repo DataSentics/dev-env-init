@@ -213,7 +213,6 @@ jobs:
       - name: Init
         run: |
           echo "************ Installing Conda ************"
-          brew install libgit2
           curl https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-MacOSX-x86_64.sh --silent -o Miniconda3-latest-MacOSX-x86_64.sh
           chmod +x Miniconda3-latest-MacOSX-x86_64.sh
           bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
@@ -250,7 +249,6 @@ jobs:
       - name: Init
         run: |
           echo "************ Installing Conda ************"
-          brew install libgit2
           curl https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-MacOSX-x86_64.sh --silent -o Miniconda3-latest-MacOSX-x86_64.sh
           chmod +x Miniconda3-latest-MacOSX-x86_64.sh
           bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
