@@ -246,7 +246,7 @@ show_installation_finished_info() {
   echo ""
 }
 
-prepare_environment_databricks_app() {
+base_environment_setup() {
   prepare_environment
 
   if [ ! -d "$CONDA_ENV_PATH" ]; then
@@ -256,24 +256,31 @@ prepare_environment_databricks_app() {
 
   install_poetry
   install_dependencies
-  download_winutils_on_windows
   set_conda_scripts
+}
+
+databricks_environment_setup() {
+  download_winutils_on_windows
   download_java
   create_databricks_connect_config
+}
+
+# main invocation functions ---------------------
+
+prepare_environment_databricks_app() {
+  base_environment_setup
+  databricks_environment_setup
   create_dot_env_file
   show_installation_finished_info
 }
 
 prepare_environment_for_package() {
-  prepare_environment
+  base_environment_setup
+  show_installation_finished_info
+}
 
-  if [ ! -d "$CONDA_ENV_PATH" ]; then
-    echo "Creating new Conda environment"
-    create_conda_environment
-  fi
-
-  install_poetry
-  install_dependencies
-  set_conda_scripts
+prepare_environment_for_package_with_databricks() {
+  base_environment_setup
+  databricks_environment_setup
   show_installation_finished_info
 }
