@@ -60,6 +60,13 @@ setup_conda() {
     PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/bin/python"
   fi
 
+  if [ ! -f "$HOME/.bash_profile" ]; then
+    echo "Creating .bash_profile"
+    touch "$HOME/.bash_profile"
+    echo "test -f ~/.profile && . ~/.profile" >> "$HOME/.bash_profile"
+    echo "test -f ~/.bashrc && . ~/.bashrc" >> "$HOME/.bash_profile"
+  fi
+
   if [ ! -f "$HOME/.bashrc" ]; then
     echo "Creating .bashrc"
     touch "$HOME/.bashrc"
