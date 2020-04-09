@@ -123,7 +123,8 @@ prepare_environment() {
   fi
 
   if [ $DETECTED_OS == "mac" ]; then
-    brew install libgit2
+    # pygit2 vs. libgit2 versions compatibility matrix: https://www.pygit2.org/install.html#version-numbers
+    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f4a74cf22ba61749acb773508e287794bb36ef9d/Formula/libgit2.rb # libgit2 0.28.4
   fi
 
   CONDA_ENV_PATH="$CURRENT_DIR/.venv"
