@@ -106,7 +106,7 @@ jobs:
           ./run_tests.sh
           ./pylint.sh
           echo "******* 2nd env-init.sh invocation *******"
-          source $HOME/.poetry/env
+          PATH=$HOME/.poetry/bin:$PATH
           poetry add exponea-python-sdk="0.1.*"
           pip uninstall -y exponea-python-sdk
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
@@ -146,7 +146,7 @@ jobs:
           ./run_tests.sh
           ./pylint.sh
           echo "******* 2nd env-init.sh invocation *******"
-          source $HOME/.poetry/env
+          PATH=$HOME/.poetry/bin:$PATH
           poetry add exponea-python-sdk="0.1.*"
           pip uninstall -y exponea-python-sdk
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
@@ -186,7 +186,7 @@ jobs:
           ./run_tests.sh
           ./pylint.sh
           echo "******* 2nd env-init.sh invocation *******"
-          source $HOME/.poetry/env
+          PATH=$HOME/.poetry/bin:$PATH
           poetry add exponea-python-sdk="0.1.*"
           pip uninstall -y exponea-python-sdk
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
