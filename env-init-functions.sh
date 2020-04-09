@@ -51,13 +51,16 @@ add_conda_to_path() {
 
 setup_conda() {
   CONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
-  
+
   echo "Using Conda base dir: $CONDA_BASE_DIR"
 
   if [ $IS_WINDOWS == 1 ]; then
     PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/python.exe"
+    # c:/foo/bar -> /c/foo/bar
+    PYTHON_ENV_EXECUTABLE_DIR=$(sed -r 's|^([a-zA-Z]):|/\1|g' <<< $CONDA_ENV_PATH)
   else
     PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/bin/python"
+    PYTHON_ENV_EXECUTABLE_DIR="$CONDA_ENV_PATH/bin"
   fi
 
   if [ ! -f "$HOME/.bash_profile" ]; then
@@ -146,16 +149,12 @@ install_poetry() {
 }
 
 install_dependencies() {
-  echo "Activating Conda environment"
-  eval "$(conda shell.bash hook)"
-  conda activate "$CONDA_ENV_PATH"
-
   local POETRY_PATH
-  POETRY_PATH=$(where poetry | sed -n '1!p')
+  POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" where poetry | sed -n '1!p')
   echo "Using Poetry from: $POETRY_PATH"
 
   echo "Installing dependencies from poetry.lock"
-  poetry install --no-root
+  PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" poetry install --no-root
 }
 
 download_winutils_on_windows() {
