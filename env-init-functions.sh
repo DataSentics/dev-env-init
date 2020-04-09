@@ -152,7 +152,13 @@ install_poetry() {
 
 install_dependencies() {
   local POETRY_PATH
-  POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" where poetry | sed -n '1!p')
+
+  if [ $IS_WINDOWS == 1 ]; then
+    POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" where poetry | sed -n '1!p')
+  else
+    POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" which poetry | sed -n '2!p')
+  fi
+
   echo "Using Poetry from: $POETRY_PATH"
 
   echo "Installing dependencies from poetry.lock"
