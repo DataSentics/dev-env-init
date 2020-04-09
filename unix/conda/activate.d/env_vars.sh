@@ -6,7 +6,6 @@ export PROJECT_ROOT
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPATH="$PROJECT_ROOT/src"
 
-echo "Unsetting SPARK_HOME to prevent possible incompatibility with existing Spark installation"
 unset SPARK_HOME
 
 if [ -f "$PROJECT_ROOT/.env" ]; then
