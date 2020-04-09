@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+set +H
+
 if [[ -z "$ENV_INIT_BRANCH" ]]; then ENV_INIT_BRANCH="master"; fi
 
 add_conda_to_path() {
@@ -157,6 +159,22 @@ install_dependencies() {
   PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" poetry install --no-root
 }
 
+create_git_hooks() {
+  local POST_MERGE_HOOK_PATH="$CURRENT_DIR/.git/hooks/post-merge"
+
+  echo "Hooks path $POST_MERGE_HOOK_PATH"
+
+  if [ ! -f "$POST_MERGE_HOOK_PATH" ]; then
+    echo "Creating empty post-merge git hook"
+    echo -e "#!/bin/sh\n\n" > "$POST_MERGE_HOOK_PATH"
+  fi
+
+  if ! grep -q "poetry install --no-root" "$POST_MERGE_HOOK_PATH"; then
+    echo "Adding poetry install to post-merge git hook"
+    echo "poetry install --no-root" >> "$POST_MERGE_HOOK_PATH"
+  fi
+}
+
 download_winutils_on_windows() {
   if [ $IS_WINDOWS == 1 ]; then
     echo "Downloading Hadoop winutils.exe"
@@ -262,6 +280,7 @@ base_environment_setup() {
 
   install_poetry
   install_dependencies
+  create_git_hooks
   set_conda_scripts
 }
 
