@@ -108,7 +108,7 @@ setup_conda() {
   if [ $IS_WINDOWS == 1 ]; then
     PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/python.exe"
     # c:/foo/bar -> /c/foo/bar
-    PYTHON_ENV_EXECUTABLE_DIR=$(sed -r 's|^([a-zA-Z]):|/\1|g' <<< $CONDA_ENV_PATH)
+    PYTHON_ENV_EXECUTABLE_DIR=$(sed -E 's|^([a-zA-Z]):|/\1|g' <<< $CONDA_ENV_PATH)
   else
     PYTHON_BASE_EXECUTABLE_PATH="$CONDA_BASE_DIR/bin/python"
     PYTHON_ENV_EXECUTABLE_DIR="$CONDA_ENV_PATH/bin"
@@ -178,7 +178,7 @@ resolve_current_dir() {
 
   if [ $IS_WINDOWS == 1 ]; then
     # /c/dir/subdir => c:/dir/subdir
-    CURRENT_DIR=$(sed -r "s|^/([a-z])/|\1:/|" <<< $CURRENT_DIR)
+    CURRENT_DIR=$(sed -E "s|^/([a-z])/|\1:/|" <<< $CURRENT_DIR)
   fi
 }
 
