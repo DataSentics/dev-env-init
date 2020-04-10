@@ -2,16 +2,53 @@
 
 set +H
 
+GIT_VERSION_MINIMAL='2.24.0'
+CONDA_VERSION_MINIMAL='4.7.12'
+
 if [[ -z "$ENV_INIT_BRANCH" ]]; then ENV_INIT_BRANCH="master"; fi
+
+# inspired by https://stackoverflow.com/a/4025065
+check_versions () {
+    if [[ $1 == $2 ]]
+    then
+        VERSION_OK=1
+        return
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            VERSION_OK=1
+            return
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            VERSION_OK=0
+            return
+        fi
+    done
+    VERSION_OK=0
+    return
+}
 
 add_conda_to_path() {
   if hash conda 2>/dev/null; then
     CONDA_EXECUTABLE_PATH="conda"
     echo "Using Conda executable from PATH"
-    return 0
-  fi
 
-  if [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
+  elif [ -f "$HOME/Miniconda3/Library/bin/conda.bat" ]; then
     CONDA_EXECUTABLE_PATH="$HOME/Miniconda3/Library/bin/conda.bat"
     source $HOME/Miniconda3/etc/profile.d/conda.sh
 
@@ -48,10 +85,22 @@ add_conda_to_path() {
     exit 1
   fi
 
+  CONDA_VERSION=$("$CONDA_EXECUTABLE_PATH" --version | sed -E 's|^conda ([0-9.]+).*$|\1|g')
+
+  check_versions $CONDA_VERSION $CONDA_VERSION_MINIMAL
+
+  if [[ $VERSION_OK == 1 ]]; then
+    echo "Conda version $CONDA_VERSION ok"
+  else
+    echo "Conda version $CONDA_VERSION is too old, please update to $CONDA_VERSION_MINIMAL or higher"
+    exit 1
+  fi
+
   echo "Using Conda executable: $CONDA_EXECUTABLE_PATH"
 }
 
 setup_conda() {
+  CONDA_ENV_PATH="$CURRENT_DIR/.venv"
   CONDA_BASE_DIR=$(conda info --base | sed 's/\\/\//g')
 
   echo "Using Conda base dir: $CONDA_BASE_DIR"
@@ -94,12 +143,7 @@ setup_conda() {
   fi
 }
 
-prepare_environment() {
-  if [ "$(cut -c 1-7 <<< "$(uname -s)")" == "MSYS_NT" ]; then
-    echo "Wrong sh.exe in use, fix your PATH! Exiting..."
-    exit 1
-  fi
-
+detect_os() {
   if [ "$(cut -c 1-10 <<< "$(uname -s)")" == "MINGW64_NT" ]; then
     echo "Detected Windows OS"
     IS_WINDOWS=1
@@ -114,20 +158,44 @@ prepare_environment() {
       DETECTED_OS="linux"
     fi
   fi
+}
 
+check_git_version() {
+  GIT_VERSION=$(git --version | sed -E 's|^git version ([0-9.]+)[.].+$|\1|g')
+
+  check_versions $GIT_VERSION $GIT_VERSION_MINIMAL
+
+  if [[ $VERSION_OK == 1 ]]; then
+    echo "Git version $GIT_VERSION ok"
+  else
+    echo "Git version $GIT_VERSION is too old, please update to $GIT_VERSION_MINIMAL or higher"
+    exit 1
+  fi
+}
+
+resolve_current_dir() {
   CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
   if [ $IS_WINDOWS == 1 ]; then
     # /c/dir/subdir => c:/dir/subdir
     CURRENT_DIR=$(sed -r "s|^/([a-z])/|\1:/|" <<< $CURRENT_DIR)
   fi
+}
+
+prepare_environment() {
+  if [ "$(cut -c 1-7 <<< "$(uname -s)")" == "MSYS_NT" ]; then
+    echo "Wrong sh.exe in use, fix your PATH! Exiting..."
+    exit 1
+  fi
+
+  detect_os
+  check_git_version
+  resolve_current_dir
 
   if [ $DETECTED_OS == "mac" ]; then
     # pygit2 vs. libgit2 versions compatibility matrix: https://www.pygit2.org/install.html#version-numbers
     brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f4a74cf22ba61749acb773508e287794bb36ef9d/Formula/libgit2.rb # libgit2 0.28.4
   fi
-
-  CONDA_ENV_PATH="$CURRENT_DIR/.venv"
 
   add_conda_to_path
   setup_conda
