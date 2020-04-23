@@ -235,6 +235,11 @@ install_dependencies() {
 }
 
 create_git_hooks() {
+  if [ ! -d "$CURRENT_DIR/.git" ]; then
+    echo "Skipping git hooks creation"
+    return
+  fi
+
   local POST_MERGE_HOOK_PATH="$CURRENT_DIR/.git/hooks/post-merge"
 
   echo "Hooks path $POST_MERGE_HOOK_PATH"
