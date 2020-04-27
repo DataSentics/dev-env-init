@@ -2,10 +2,10 @@ name: dev-env-init
 on: [push]
 
 env:
-  PACKAGE_TESTING_REPO_URL: https://github.com/DataSentics/dbx-deploy.git
+  PACKAGE_TESTING_REPO_URL: https://github.com/bricksflow/dbx-deploy.git
   PACKAGE_TESTING_REPO_DIR: dbx-deploy
-  APP_TESTING_REPO_URL: https://github.com/DataSentics/master-package-example.git
-  APP_TESTING_REPO_DIR: master-package-example
+  APP_TESTING_REPO_URL: https://github.com/bricksflow/bricksflow.git
+  APP_TESTING_REPO_DIR: bricksflow
 
 jobs:
   package-linux:
@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/dbx-deploy'
+          repository: 'bricksflow/dbx-deploy'
           path: 'dbx-deploy'
       - name: Init
         run: |
@@ -50,8 +50,8 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/master-package-example'
-          path: 'master-package-example'
+          repository: 'bricksflow/bricksflow'
+          path: 'bricksflow'
       - name: Init
         run: |
           echo "************ Installing Conda ************"
@@ -87,7 +87,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/dbx-deploy'
+          repository: 'bricksflow/dbx-deploy'
           path: 'dbx-deploy'
       - name: Conda installation
         run: |
@@ -127,8 +127,8 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/master-package-example'
-          path: 'master-package-example'
+          repository: 'bricksflow/bricksflow'
+          path: 'bricksflow'
       - name: Conda installation
         run: |
           powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
@@ -168,7 +168,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/dbx-deploy'
+          repository: 'bricksflow/dbx-deploy'
           path: 'dbx-deploy'
       - name: Conda installation
         run: |
@@ -208,7 +208,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/dbx-deploy'
+          repository: 'bricksflow/dbx-deploy'
           path: 'dbx-deploy'
       - name: Init
         run: |
@@ -244,8 +244,8 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
-          repository: 'DataSentics/master-package-example'
-          path: 'master-package-example'
+          repository: 'bricksflow/bricksflow'
+          path: 'bricksflow'
       - name: Init
         run: |
           echo "************ Installing Conda ************"
