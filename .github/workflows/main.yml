@@ -1,4 +1,4 @@
-name: dev-env-init
+name: pipeline
 on: [push]
 
 env:
