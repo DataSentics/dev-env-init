@@ -174,7 +174,7 @@ check_git_version() {
 }
 
 resolve_current_dir() {
-  CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  CURRENT_DIR="$PWD"
 
   if [ $IS_WINDOWS == 1 ]; then
     # /c/dir/subdir => c:/dir/subdir
