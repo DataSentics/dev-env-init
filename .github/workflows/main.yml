@@ -1,29 +1,31 @@
 name: pipeline
 on: [push]
 
-env:
-  PACKAGE_TESTING_REPO_URL: https://github.com/bricksflow/console-bundle.git
-  PACKAGE_TESTING_REPO_DIR: console-bundle
-
 jobs:
-  package-linux:
-    runs-on: ubuntu-latest
+  pipeline:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v2
         with:
           repository: 'pyfony/console-bundle'
           path: 'console-bundle'
+      - uses: goanpeca/setup-miniconda@v1.1.2
+        with:
+          miniconda-version: '4.7.12'
+      - name: Update PATH
+        shell: bash -l {0}
+        run: echo "::add-path::/c/Miniconda3/Scripts"
       - name: Init
         run: |
-          echo "************ Installing Conda ************"
-          wget --quiet -O Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh
-          chmod +x Miniconda3-latest-Linux-x86_64.sh
-          bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-          source ~/miniconda/etc/profile.d/conda.sh
-          echo "****** Setting up Conda environment ******"
-          cd $PACKAGE_TESTING_REPO_DIR
+          cd console-bundle
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
+          eval "$(conda shell.bash hook)"
           conda activate "$PWD/.venv"
           ./run_tests.sh
           ./pylint.sh
@@ -51,18 +53,15 @@ jobs:
         with:
           repository: 'pyfony/console-bundle'
           path: 'console-bundle'
-      - name: Conda installation
-        run: |
-          powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
-          start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /AddToPath=1 /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
-        shell: cmd
+      - uses: goanpeca/setup-miniconda@v1.1.2
+        with:
+          miniconda-version: '4.7.12'
+      - name: Update PATH
+        shell: bash -l {0}
+        run: echo "::add-path::/c/Miniconda3/Scripts"
       - name: Init
         run: |
-          echo "************ Setting up Conda ************"
-          source ~/Miniconda3/etc/profile.d/conda.sh
-          PATH=$HOME/Miniconda3/Scripts:$PATH
-          echo "****** Setting up Conda environment ******"
-          cd $PACKAGE_TESTING_REPO_DIR
+          cd console-bundle
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
@@ -99,10 +98,7 @@ jobs:
         shell: cmd
       - name: Init
         run: |
-          echo "************ Setting up Conda ************"
-          source ~/Miniconda3/etc/profile.d/conda.sh
-          echo "****** Setting up Conda environment ******"
-          cd $PACKAGE_TESTING_REPO_DIR
+          cd console-bundle
           ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
           conda activate "$PWD/.venv"
           ./run_tests.sh
@@ -123,40 +119,3 @@ jobs:
               exit 1
           fi
         shell: sh {0}
-
-  package-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/checkout@v2
-        with:
-          repository: 'pyfony/console-bundle'
-          path: 'console-bundle'
-      - name: Init
-        run: |
-          echo "************ Installing Conda ************"
-          curl https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-MacOSX-x86_64.sh --silent -o Miniconda3-latest-MacOSX-x86_64.sh
-          chmod +x Miniconda3-latest-MacOSX-x86_64.sh
-          bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
-          source ~/miniconda/etc/profile.d/conda.sh
-          echo "****** Setting up Conda environment ******"
-          cd $PACKAGE_TESTING_REPO_DIR
-          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
-          conda activate "$PWD/.venv"
-          ./run_tests.sh
-          ./pylint.sh
-          echo "******* 2nd env-init.sh invocation *******"
-          source $HOME/.poetry/env
-          poetry add exponea-python-sdk="0.1.*"
-          pip uninstall -y exponea-python-sdk
-          ENV_INIT_BRANCH=${GITHUB_REF:11} ./env-init.sh
-          ./run_tests.sh
-          echo "********* .bashrc modifications **********"
-          if ! grep -q "pyfony_env.sh" "$HOME/.bashrc"; then
-              echo "pyfony_env.sh was not added to .bashrc"
-              exit 1
-          fi
-          if [[ ! -f "$HOME/pyfony_env.sh" ]]; then
-              echo "pyfony_env.sh was not created"
-              exit 1
-          fi
