@@ -15,6 +15,7 @@ jobs:
         with:
           repository: 'pyfony/console-bundle'
           path: 'console-bundle'
+          ref: 'e307e491b6984bd6065a9aca061a4a3da6948a95'
       - uses: goanpeca/setup-miniconda@v1.1.2
         with:
           miniconda-version: '4.7.12'
@@ -53,6 +54,7 @@ jobs:
         with:
           repository: 'pyfony/console-bundle'
           path: 'console-bundle'
+          ref: 'e307e491b6984bd6065a9aca061a4a3da6948a95'
       - uses: goanpeca/setup-miniconda@v1.1.2
         with:
           miniconda-version: '4.7.12'
@@ -91,6 +93,7 @@ jobs:
         with:
           repository: 'pyfony/console-bundle'
           path: 'console-bundle'
+          ref: 'e307e491b6984bd6065a9aca061a4a3da6948a95'
       - name: Conda installation
         run: |
           powershell -Command "Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
