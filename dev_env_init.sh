@@ -194,7 +194,9 @@ prepare_environment() {
 
   if [ $DETECTED_OS == "mac" ]; then
     # pygit2 vs. libgit2 versions compatibility matrix: https://www.pygit2.org/install.html#version-numbers
-    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f4a74cf22ba61749acb773508e287794bb36ef9d/Formula/libgit2.rb # libgit2 0.28.4
+    curl -sSL https://raw.githubusercontent.com/Homebrew/homebrew-core/f4a74cf22ba61749acb773508e287794bb36ef9d/Formula/libgit2.rb --silent -o "libgit2.rb"
+    brew install libgit2.rb # libgit2 0.28.4
+    rm libgit2.rb
   fi
 
   add_conda_to_path
