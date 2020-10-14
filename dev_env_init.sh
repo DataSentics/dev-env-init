@@ -132,14 +132,14 @@ setup_conda() {
     echo "source $CONDA_BASE_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
   fi
 
-  echo "Creating ~/datasentics_env.sh"
-  rm -f "$HOME/datasentics_env.sh"
-  touch "$HOME/datasentics_env.sh"
-  echo "alias ca='conda activate \$PWD/.venv'" >> ~/datasentics_env.sh
+  echo "Creating ~/pyfony_env.sh"
+  rm -f "$HOME/pyfony_env.sh"
+  touch "$HOME/pyfony_env.sh"
+  echo "alias ca='conda activate \$PWD/.venv'" >> ~/pyfony_env.sh
 
-  if ! grep -q "datasentics_env.sh" "$HOME/.bashrc"; then
-      echo "source ~/datasentics_env.sh added to ~/.bashrc"
-      echo "source ~/datasentics_env.sh" >> ~/.bashrc
+  if ! grep -q "pyfony_env.sh" "$HOME/.bashrc"; then
+      echo "source ~/pyfony_env.sh added to ~/.bashrc"
+      echo "source ~/pyfony_env.sh" >> ~/.bashrc
   fi
 }
 
@@ -270,13 +270,13 @@ set_conda_scripts() {
   echo "Seting-up conda/activate.d"
   local CONDA_ACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/activate.d"
   mkdir -p $CONDA_ACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/$ENV_INIT_BRANCH/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.sh"
+  curl "https://raw.githubusercontent.com/pyfony/dev-env-init/$ENV_INIT_BRANCH/unix/conda/activate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_ACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_ACTIVATE_DIR/env_vars.sh"
 
   echo "Seting-up conda/deactivate.d"
   local CONDA_DEACTIVATE_DIR="$CONDA_ENV_PATH/etc/conda/deactivate.d"
   mkdir -p $CONDA_DEACTIVATE_DIR
-  curl "https://raw.githubusercontent.com/DataSentics/dev-env-init/$ENV_INIT_BRANCH/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.sh"
+  curl "https://raw.githubusercontent.com/pyfony/dev-env-init/$ENV_INIT_BRANCH/unix/conda/deactivate.d/env_vars.sh?$(date +%s)" --silent > "$CONDA_DEACTIVATE_DIR/env_vars.sh"
   chmod +x "$CONDA_DEACTIVATE_DIR/env_vars.sh"
 }
 
