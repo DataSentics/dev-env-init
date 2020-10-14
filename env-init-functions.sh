@@ -7,6 +7,8 @@ CONDA_VERSION_MINIMAL='4.7.12'
 
 if [[ -z "$ENV_INIT_BRANCH" ]]; then ENV_INIT_BRANCH="master"; fi
 
+echo "WARNING: The env-init-functions.sh script is deprecated, please us the dev_env_init.sh instead"
+
 # inspired by https://stackoverflow.com/a/4025065
 check_versions () {
     if [[ $1 == $2 ]]
