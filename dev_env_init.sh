@@ -212,27 +212,20 @@ install_poetry() {
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py --silent -o "$CONDA_ENV_PATH/get-poetry.py"
   $PYTHON_BASE_EXECUTABLE_PATH "$CONDA_ENV_PATH/get-poetry.py" -y --version 1.0.0
 
+  POETRY_PATH="$HOME/.poetry/bin"
+
   if [ $IS_WINDOWS == 1 ]; then
     # $HOME/.poetry/env does not exist on Windows
-    export PATH="$HOME/.poetry/bin:$PATH"
+    export PATH="$POETRY_PATH:$PATH"
   else
     source $HOME/.poetry/env
   fi
 }
 
 install_dependencies() {
-  local POETRY_PATH
-
-  if [ $IS_WINDOWS == 1 ]; then
-    POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" where poetry | sed -n '1!p')
-  else
-    POETRY_PATH=$(PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" which poetry | sed -n '2!p')
-  fi
-
   echo "Using Poetry from: $POETRY_PATH"
-
   echo "Installing dependencies from poetry.lock"
-  PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" poetry install --no-root
+  PATH="$PYTHON_ENV_EXECUTABLE_DIR:$PATH" "$POETRY_PATH/poetry" install --no-root
 }
 
 create_git_hooks() {
@@ -252,7 +245,7 @@ create_git_hooks() {
 
   if ! grep -q "poetry install --no-root" "$POST_MERGE_HOOK_PATH"; then
     echo "Adding poetry install to post-merge git hook"
-    echo "poetry install --no-root" >> "$POST_MERGE_HOOK_PATH"
+    echo "$POETRY_PATH/poetry install --no-root" >> "$POST_MERGE_HOOK_PATH"
   fi
 }
 
