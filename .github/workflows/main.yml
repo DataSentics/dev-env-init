@@ -1,8 +1,6 @@
 name: dev-env-init
 on:
   push:
-  schedule:
-    - cron: "0 6 * * *"
 
 jobs:
   pipeline:
